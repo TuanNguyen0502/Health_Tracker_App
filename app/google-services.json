@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "480182986425",
+    "firebase_url": "https://health-tracker-app-d46ec-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "health-tracker-app-d46ec",
+    "storage_bucket": "health-tracker-app-d46ec.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:480182986425:android:7a9d1da16fe489de505d68",
+        "android_client_info": {
+          "package_name": "hcmute.edu.vn.healthtrackerapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDrWC01ce3Yi58n_FWFkx_GJKXfS6HLVHE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MakeAppointmentActivity"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <EditText
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:id="@+id/editTextDoctor"
+        android:hint="Doctor Email"
+        android:inputType="textEmailAddress"
+        android:layout_marginBottom="8dp"/>
+
+    <Button
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:id="@+id/buttonPickDate"
+        android:text="Pick Date" />
+
+    <TextView
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:id="@+id/textViewDate"
+        android:text="Selected Date"
+        android:layout_marginTop="8dp"/>
+
+    <Button
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:id="@+id/buttonPickTime"
+        android:text="Pick Time"
+        android:layout_marginTop="8dp"/>
+
+    <TextView
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:id="@+id/textViewTime"
+        android:text="Selected Time"
+        android:layout_marginTop="8dp"/>
+
+    <Button
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:id="@+id/buttonBook"
+        android:text="Book Appointment"
+        android:layout_marginTop="16dp"/>
+
+</LinearLayout>
