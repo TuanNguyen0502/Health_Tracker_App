@@ -3,11 +3,11 @@
 
     <item
         android:id="@+id/nav_appointments"
-        android:icon="@drawable/ic_appointments"
+        android:icon="@drawable/ic_health"
         android:title="Appointments" />
 
     <item
         android:id="@+id/nav_profile"
-        android:icon="@drawable/ic_profile"
+        android:icon="@drawable/ic_health"
         android:title="Profile" />
 </menu>
