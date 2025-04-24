@@ -2,6 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="hcmute.edu.vn.healthtrackerapp">
+    <!-- Storage permission for Android 13 and above -->
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" /> <!-- internet access -->
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -13,6 +18,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.HealthTrackerApp"
         tools:targetApi="31">
+        <activity
+            android:name=".FullImageActivity"
+            android:exported="false" />
+        <activity
+            android:name=".MedicalRecordsActivity"
+            android:exported="false" />
         <activity
             android:name=".DoctorMainActivity"
             android:exported="false" />
@@ -37,6 +48,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <meta-data
+            android:name="CLOUDINARY_URL"
+            android:value="cloudinary://231995763463355:JwhusLwA3raMTU8diso2Z_PhkR0@dd1jxbzf1" />
     </application>
 
 </manifest>

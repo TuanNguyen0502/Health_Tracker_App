@@ -46,4 +46,6 @@ dependencies {
     androidTestImplementation(libs.espresso.core)
 
     implementation(platform("com.google.firebase:firebase-bom:33.12.0"))
+    implementation("com.squareup.picasso:picasso:2.8")
+    implementation("com.cloudinary:cloudinary-android:3.0.2")
 }

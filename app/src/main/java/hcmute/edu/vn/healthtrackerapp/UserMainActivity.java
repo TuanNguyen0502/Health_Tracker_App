@@ -1,9 +1,12 @@
 package hcmute.edu.vn.healthtrackerapp;
 
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -17,7 +20,7 @@ import hcmute.edu.vn.healthtrackerapp.fragment.MedicalRecordsFragment;
 import hcmute.edu.vn.healthtrackerapp.fragment.ProfileFragment;
 
 public class UserMainActivity extends AppCompatActivity {
-
+    private static final int PICK_IMAGE_REQUEST = 1;
     private BottomNavigationView bottomNavigationView;
 
     @Override
@@ -30,8 +33,10 @@ public class UserMainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        
+
         initViews();
+
+        requestPermission();
     }
 
     private void initViews() {
@@ -60,5 +65,12 @@ public class UserMainActivity extends AppCompatActivity {
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.frameLayout, fragment)
                 .commit();
+    }
+
+    private void requestPermission() {
+        if (ContextCompat.checkSelfPermission(UserMainActivity.this, android.Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(UserMainActivity.this, new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, PICK_IMAGE_REQUEST);
+        }
     }
 }

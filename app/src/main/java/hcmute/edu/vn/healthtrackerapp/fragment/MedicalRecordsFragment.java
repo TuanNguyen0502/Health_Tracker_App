@@ -5,20 +5,35 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.cloudinary.android.MediaManager;
+import com.cloudinary.android.callback.ErrorInfo;
+import com.cloudinary.android.callback.UploadCallback;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.squareup.picasso.Picasso;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
+import hcmute.edu.vn.healthtrackerapp.MedicalRecordsActivity;
 import hcmute.edu.vn.healthtrackerapp.R;
 
 /**
@@ -27,12 +42,11 @@ import hcmute.edu.vn.healthtrackerapp.R;
  * create an instance of this fragment.
  */
 public class MedicalRecordsFragment extends Fragment {
-    private Button buttonUpload;
+    private static final String TAG = "MedicalRecordsFragment";
+    private Button buttonUpload, buttonViewMedicalRecord;
+    private EditText editTextImageTitle;
     private ImageView imageViewRecord;
-    private static final int PICK_IMAGE_REQUEST = 1;
-    private Uri imageUri;
-    private StorageReference storageReference;
-    private FirebaseUser currentUser;
+    private Uri imagePath;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -80,39 +94,120 @@ public class MedicalRecordsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_medical_records, container, false);
 
         buttonUpload = view.findViewById(R.id.buttonUpload);
+        buttonViewMedicalRecord = view.findViewById(R.id.buttonViewMedicalRecord);
         imageViewRecord = view.findViewById(R.id.imageViewRecord);
-        storageReference = FirebaseStorage.getInstance().getReference("medical_records");
-        currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        editTextImageTitle = view.findViewById(R.id.editTextImageTitle);
 
-        buttonUpload.setOnClickListener(v -> openFileChooser());
+        initConfig();
+
+        imageViewRecord.setOnClickListener(v -> selectImage());
+
+
+        buttonUpload.setOnClickListener(v -> uploadImage());
+
+        buttonViewMedicalRecord.setOnClickListener(v -> {
+            startActivity(new Intent(getContext(), MedicalRecordsActivity.class));
+        });
 
         return view;
     }
 
-    private void openFileChooser() {
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(intent, PICK_IMAGE_REQUEST);
+    private void initConfig() {
+        Map config = new HashMap();
+        config.put("cloud_name", "dd1jxbzf1");
+        config.put("api_key", "231995763463355");
+        config.put("api_secret", "JwhusLwA3raMTU8diso2Z_PhkR0");
+//        config.put("secure", true);
+        MediaManager.init(getContext(), config);
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK && data != null && data.getData() != null) {
-            imageUri = data.getData();
-            imageViewRecord.setImageURI(imageUri);
-            uploadImage();
-        }
+    private void selectImage() {
+        Intent intent = new Intent();
+        intent.setType("image/*"); // Select image type pdf/gif/png/jpg
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        imageActivityResultLauncher.launch(intent);
     }
+
+    ActivityResultLauncher<Intent> imageActivityResultLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<>() {
+                @Override
+                public void onActivityResult(ActivityResult o) {
+                    if (o.getResultCode() == Activity.RESULT_OK) {
+                        Intent data = o.getData();
+                        if (data != null && data.getData() != null) {
+                            imagePath = data.getData();
+                            Picasso.get().load(imagePath).into(imageViewRecord);
+                        }
+                    }
+                }
+            });
 
     private void uploadImage() {
-        if (imageUri != null) {
-            StorageReference fileReference = storageReference.child(currentUser.getUid() + "/" + System.currentTimeMillis() + ".jpg");
-
-            fileReference.putFile(imageUri)
-                    .addOnSuccessListener(taskSnapshot -> Toast.makeText(getContext(), "Upload successful", Toast.LENGTH_SHORT).show())
-                    .addOnFailureListener(e -> Toast.makeText(getContext(), "Upload failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+        if (imagePath == null) {
+            Toast.makeText(getContext(), "Please select an image", Toast.LENGTH_SHORT).show();
+            return;
         }
+        if (editTextImageTitle.getText().toString().isEmpty()) {
+            Toast.makeText(getContext(), "Please enter a title", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        MediaManager.get().upload(imagePath).callback(new UploadCallback() {
+            @Override
+            public void onStart(String requestId) {
+                Log.d(TAG, "onStart: " + requestId);
+            }
+
+            @Override
+            public void onProgress(String requestId, long bytes, long totalBytes) {
+                Log.d(TAG, "onProgress: " + bytes + "/" + totalBytes);
+            }
+
+            @Override
+            public void onSuccess(String requestId, Map resultData) {
+                Log.d(TAG, "onSuccess: " + resultData.get("url"));
+                String imageUrl = (String) resultData.get("url");
+                saveImageUrlToFirebase(imageUrl);
+            }
+
+            @Override
+            public void onError(String requestId, ErrorInfo error) {
+                Log.d(TAG, "onError: " + error.getDescription());
+            }
+
+            @Override
+            public void onReschedule(String requestId, ErrorInfo error) {
+                Log.d(TAG, "onReschedule: " + error.getDescription());
+            }
+        }).dispatch();
+    }
+
+    private void saveImageUrlToFirebase(String imageUrl) {
+        DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference();
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        String userId = currentUser.getUid();
+        String recordId = UUID.randomUUID().toString();
+        String imageTitle = editTextImageTitle.getText().toString();
+        // Thay đổi http:// thành https://
+        String httpsUrl = imageUrl.replace("http://", "https://");
+
+        // Tạo object chứa thông tin record
+        Map<String, Object> medicalRecord = new HashMap<>();
+        medicalRecord.put("title", imageTitle);
+        medicalRecord.put("imageUrl", httpsUrl);
+
+        // Đẩy vào "users/userId123/medicalRecords/recordId1"
+        databaseRef.child("users")
+                .child(userId)
+                .child("medicalRecords")
+                .child(recordId)
+                .setValue(medicalRecord)
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(getContext(), "Lưu medical record thành công!", Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(getContext(), "Lưu thất bại: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
     }
 }
