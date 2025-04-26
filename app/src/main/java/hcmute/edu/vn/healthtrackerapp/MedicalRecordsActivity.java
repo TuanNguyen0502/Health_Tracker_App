@@ -62,7 +62,9 @@ public class MedicalRecordsActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 recordList.clear();
                 for (DataSnapshot recordSnap : snapshot.getChildren()) {
+                    String recordId = recordSnap.getKey(); // <== lấy key
                     MedicalRecord record = recordSnap.getValue(MedicalRecord.class);
+                    record.setId(recordId);
                     recordList.add(record);
                 }
                 adapter.notifyDataSetChanged();

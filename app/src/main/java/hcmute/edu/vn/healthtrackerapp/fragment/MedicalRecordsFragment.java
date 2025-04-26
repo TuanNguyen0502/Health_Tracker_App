@@ -98,8 +98,6 @@ public class MedicalRecordsFragment extends Fragment {
         imageViewRecord = view.findViewById(R.id.imageViewRecord);
         editTextImageTitle = view.findViewById(R.id.editTextImageTitle);
 
-        initConfig();
-
         imageViewRecord.setOnClickListener(v -> selectImage());
 
 
@@ -110,15 +108,6 @@ public class MedicalRecordsFragment extends Fragment {
         });
 
         return view;
-    }
-
-    private void initConfig() {
-        Map config = new HashMap();
-        config.put("cloud_name", "dd1jxbzf1");
-        config.put("api_key", "231995763463355");
-        config.put("api_secret", "JwhusLwA3raMTU8diso2Z_PhkR0");
-//        config.put("secure", true);
-        MediaManager.init(getContext(), config);
     }
 
     private void selectImage() {
@@ -168,7 +157,8 @@ public class MedicalRecordsFragment extends Fragment {
             public void onSuccess(String requestId, Map resultData) {
                 Log.d(TAG, "onSuccess: " + resultData.get("url"));
                 String imageUrl = (String) resultData.get("url");
-                saveImageUrlToFirebase(imageUrl);
+                String public_id = (String) resultData.get("public_id");
+                saveImageToFirebase(imageUrl, public_id);
             }
 
             @Override
@@ -183,7 +173,7 @@ public class MedicalRecordsFragment extends Fragment {
         }).dispatch();
     }
 
-    private void saveImageUrlToFirebase(String imageUrl) {
+    private void saveImageToFirebase(String imageUrl, String public_id) {
         DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference();
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         String userId = currentUser.getUid();
@@ -196,6 +186,7 @@ public class MedicalRecordsFragment extends Fragment {
         Map<String, Object> medicalRecord = new HashMap<>();
         medicalRecord.put("title", imageTitle);
         medicalRecord.put("imageUrl", httpsUrl);
+        medicalRecord.put("public_id", public_id);
 
         // Đẩy vào "users/userId123/medicalRecords/recordId1"
         databaseRef.child("users")
