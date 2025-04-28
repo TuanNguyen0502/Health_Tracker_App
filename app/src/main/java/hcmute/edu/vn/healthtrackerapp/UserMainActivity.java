@@ -1,6 +1,7 @@
 package hcmute.edu.vn.healthtrackerapp;
 
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
@@ -71,6 +72,20 @@ public class UserMainActivity extends AppCompatActivity {
         if (ContextCompat.checkSelfPermission(UserMainActivity.this, android.Manifest.permission.READ_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(UserMainActivity.this, new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, PICK_IMAGE_REQUEST);
+        }
+
+        if (ContextCompat.checkSelfPermission(UserMainActivity.this, android.Manifest.permission.ACTIVITY_RECOGNITION)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(UserMainActivity.this,
+                new String[]{android.Manifest.permission.ACTIVITY_RECOGNITION}, 100);
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(UserMainActivity.this, android.Manifest.permission.POST_NOTIFICATIONS)
+                    != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(UserMainActivity.this,
+                    new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, 101);
+            }
         }
     }
 }

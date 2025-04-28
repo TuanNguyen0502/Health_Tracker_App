@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     id("com.google.gms.google-services")
+
 }
 
 android {
@@ -48,4 +49,6 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:33.12.0"))
     implementation("com.squareup.picasso:picasso:2.8")
     implementation("com.cloudinary:cloudinary-android:3.0.2")
+    implementation("com.google.android.gms:play-services-auth:20.7.0")
+    implementation ("com.google.android.gms:play-services-fitness:20.0.0")
 }
