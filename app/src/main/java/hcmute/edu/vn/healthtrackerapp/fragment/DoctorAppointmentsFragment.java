@@ -94,7 +94,7 @@ public class DoctorAppointmentsFragment extends Fragment {
 
         recyclerAppointments.setLayoutManager(new LinearLayoutManager(getContext()));
         appointmentList = new ArrayList<>();
-        appointmentAdapter = new AppointmentAdapter(appointmentList);
+        appointmentAdapter = new AppointmentAdapter(appointmentList, getContext());
         recyclerAppointments.setAdapter(appointmentAdapter);
 
         btnAddAppointment = view.findViewById(R.id.btnAddAppointment);
