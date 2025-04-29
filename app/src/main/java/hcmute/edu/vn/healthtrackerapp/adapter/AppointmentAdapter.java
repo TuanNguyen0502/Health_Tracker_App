@@ -30,9 +30,11 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
     @Override
     public void onBindViewHolder(@NonNull AppointmentViewHolder holder, int position) {
         Appointment appointment = appointmentList.get(position);
-        holder.textViewInfo.setText("User: " + appointment.userEmail + "\nDoctor: " + appointment.doctorEmail +
-                "\nDate: " + appointment.date + "\nTime: " + appointment.time);
+        holder.textViewDate.setText("Date: " + appointment.date);
+        holder.textViewTime.setText("Time: " + appointment.time);
+        holder.textViewUser.setText("User: " + appointment.userEmail);
     }
+
 
     @Override
     public int getItemCount() {
@@ -40,11 +42,15 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
     }
 
     public static class AppointmentViewHolder extends RecyclerView.ViewHolder {
-        TextView textViewInfo;
+        TextView textViewDate;
+        TextView textViewTime;
+        TextView textViewUser;
 
         public AppointmentViewHolder(@NonNull View itemView) {
             super(itemView);
-            textViewInfo = itemView.findViewById(R.id.textViewInfo);
+            textViewDate = itemView.findViewById(R.id.textViewDate);
+            textViewTime = itemView.findViewById(R.id.textViewTime);
+            textViewUser = itemView.findViewById(R.id.textViewUser);
         }
     }
 }

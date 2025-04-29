@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:gravity="center_horizontal"
+    android:background="?android:attr/colorBackground">
+
+    <!-- Tiêu đề -->
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Tạo lịch hẹn"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="16dp"
+        android:textColor="@android:color/black" />
+
+    <!-- Chọn ngày -->
+    <TextView
+        android:id="@+id/tvSelectedDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="12dp"
+        android:background="@android:drawable/editbox_background"
+        android:text="Chọn ngày"
+        android:gravity="center_vertical"
+        android:drawableEnd="@android:drawable/ic_menu_today"
+        android:layout_marginBottom="16dp"/>
+
+    <!-- Chọn giờ -->
+    <TextView
+        android:id="@+id/tvSelectedTime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="12dp"
+        android:background="@android:drawable/editbox_background"
+        android:text="Chọn giờ"
+        android:gravity="center_vertical"
+        android:drawableEnd="@android:drawable/ic_menu_recent_history"
+        android:layout_marginBottom="24dp"/>
+
+    <!-- Nút lưu -->
+    <Button
+        android:id="@+id/btnSaveAppointment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Lưu lịch hẹn"
+        android:backgroundTint="@color/black"
+        android:textColor="@android:color/white"
+        android:padding="12dp" />
+
+</LinearLayout>
