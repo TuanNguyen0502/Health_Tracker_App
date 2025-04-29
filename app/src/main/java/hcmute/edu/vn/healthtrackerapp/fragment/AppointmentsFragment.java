@@ -21,7 +21,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import hcmute.edu.vn.healthtrackerapp.adapter.AppointmentAdapter;
@@ -34,7 +36,7 @@ import hcmute.edu.vn.healthtrackerapp.model.Appointment;
  * Use the {@link AppointmentsFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class AppointmentsFragment extends Fragment {
+public class AppointmentsFragment extends Fragment implements AppointmentUpdateListener {
 
     private Button btnMakeAppointment;
     private RecyclerView recyclerAppointments;
@@ -89,12 +91,11 @@ public class AppointmentsFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_appointments, container, false);
 
-        btnMakeAppointment = view.findViewById(R.id.btnMakeAppointment);
         recyclerAppointments = view.findViewById(R.id.recyclerAppointments);
 
         recyclerAppointments.setLayoutManager(new LinearLayoutManager(getContext()));
         appointmentList = new ArrayList<>();
-        appointmentAdapter = new AppointmentAdapter(appointmentList);
+        appointmentAdapter = new AppointmentAdapter(appointmentList, getContext());
         recyclerAppointments.setAdapter(appointmentAdapter);
 
         FirebaseAuth auth = FirebaseAuth.getInstance();
@@ -111,22 +112,32 @@ public class AppointmentsFragment extends Fragment {
     }
 
     private void loadAppointments() {
-        appointmentsRef.orderByChild("userId").equalTo(currentUserId)
-                .addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        appointmentList.clear();
-                        for (DataSnapshot item : snapshot.getChildren()) {
-                            Appointment appointment = item.getValue(Appointment.class);
-                            appointmentList.add(appointment);
-                        }
-                        appointmentAdapter.notifyDataSetChanged();
-                    }
+        Calendar calendar = Calendar.getInstance();
+        String formattedDate = String.format("%02d/%02d/%04d", calendar.get(Calendar.DATE), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.YEAR));
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                        Toast.makeText(getContext(), "Failed to load appointments", Toast.LENGTH_SHORT).show();
+        appointmentsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                appointmentList.clear();
+                for (DataSnapshot item : snapshot.getChildren()) {
+                    Appointment appointment = item.getValue(Appointment.class);
+                    if (appointment != null && formattedDate.equals(appointment.date)) {
+                        appointmentList.add(appointment);
                     }
-                });
+                }
+                appointmentAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(getContext(), "Failed to load appointments", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    @Override
+    public void onAppointmentUpdated() {
+        loadAppointments();
     }
 }
+
