@@ -132,9 +132,9 @@ public class ProfileFragment extends Fragment {
         FirebaseUser user = auth.getCurrentUser();
         if (user != null) {
             Map<String, Object> userProfile = new HashMap<>();
-            userProfile.put("fullName", fullName);
+            userProfile.put("name", fullName);
             userProfile.put("email", email);
-            userProfile.put("phoneNumber", phoneNumber);
+            userProfile.put("phone", phoneNumber);
 
             databaseReference.updateChildren(userProfile)
                     .addOnSuccessListener(aVoid -> {
